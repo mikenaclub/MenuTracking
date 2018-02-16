@@ -1,12 +1,23 @@
 import React from 'react';
 import './../App.css';
-import { compose, withState, withHandlers } from 'recompose'
+import { compose, withState, withHandlers, lifecycle } from 'recompose'
+import io from 'socket.io-client'
+
 
 const enchance = compose(
     withState('step', 'setStep', 1),
+    withState('socket', 'setSocket', io("http://localhost:3000/trackMenu")),
     withHandlers({
-        handleOnChangeStep: (props) => () => {
-            console.log('test')
+        handleOnChangeStep: (props) => (event) => {
+            console.log(event.target.value)
+            props.socket.emit('msg', event.target.value)
+        }
+    }),
+    lifecycle({
+        componentDidMount() {
+            this.props.socket.on('connect', function (data) {
+                this.props.socket.emit('msg', 'App connected')
+            });
         }
     })
 );
