@@ -1,33 +1,31 @@
 var express = require('express');
+var socket_io = require("socket.io");
+var cors = require('cors');
+
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var socket_io = require("socket.io");
-// Socket.io
-var io = socket_io();
-app.io = io;
-
-var routes = require('./routes/trackMenu')(io);
-
 var index = require('./routes/index');
 var users = require('./routes/users');
 var trackMenu = require('./routes/trackMenu');
 
 var app = express();
+// Socket.io
+var io = socket_io();
+app.io = io;
 
-var cors = require('cors');
 var corsOptions = {
   origin: 'http://localhost:8000'
 }
 app.use(cors(corsOptions))
 
-
+var routes = require('./routes/trackMenu')(io);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -58,6 +56,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 
 module.exports = app;
